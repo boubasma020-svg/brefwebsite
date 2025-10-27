@@ -60,7 +60,54 @@ export default function BriefForm({ onSuccess }: BriefFormProps) {
     setLoading(true);
 
     try {
-      const { error } = await supabase.from('briefs').insert([formData]);
+      // Transform form data to match database schema
+      const dbData = {
+        company_name: formData.company_name,
+        activity_sector: formData.activity_sector,
+        history_positioning: formData.history_positioning,
+        site_objectives: formData.site_objectives,
+        site_objectives_choices: formData.site_objectives_choices,
+        expected_results: formData.expected_results,
+        kpis: formData.kpis,
+        target_audience: formData.target_audience,
+        target_age_ranges: formData.target_age_ranges,
+        target_gender: formData.target_gender,
+        target_locations: formData.target_locations,
+        target_professions: formData.target_professions,
+        target_digital_habits: formData.target_digital_habits,
+        target_needs: formData.target_needs,
+        user_experience: formData.user_experience,
+        main_pages_array: formData.main_pages,
+        main_pages_other: formData.main_pages_other,
+        specific_features_array: formData.specific_features,
+        specific_features_other: formData.specific_features_other,
+        competitor_examples: formData.competitor_examples,
+        visual_identity: formData.visual_identity,
+        colors_typography: formData.colors_typography,
+        brand_tone_array: formData.brand_tone,
+        brand_tone_other: formData.brand_tone_other,
+        content_types_array: formData.content_types,
+        content_types_other: formData.content_types_other,
+        content_provider: formData.content_provider,
+        seo_optimization: formData.seo_optimization,
+        domain_name: formData.domain_name,
+        domain_name_details: formData.domain_name_details,
+        hosting: formData.hosting,
+        hosting_details: formData.hosting_details,
+        cms_preference: formData.cms_preference,
+        cms_preference_details: formData.cms_preference_details,
+        budget: formData.budget,
+        deadline: formData.deadline,
+        validation_phases: formData.validation_phases,
+        maintenance_array: formData.maintenance,
+        maintenance_other: formData.maintenance_other,
+        training_needed: formData.training_needed,
+        future_evolutions: formData.future_evolutions,
+        team_member_name: formData.team_member_name,
+        team_member_email: formData.team_member_email,
+      };
+
+      const { error } = await supabase.from('briefs').insert([dbData]);
 
       if (error) throw error;
 
