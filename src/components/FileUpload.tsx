@@ -29,15 +29,33 @@ export default function FileUpload({
     try {
       // Create a unique file name
       const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const uniqueFileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const filePath = `${uniqueFileName}`;
 
       // Upload file to Supabase Storage
-      const { error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from(bucketName)
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error details:', uploadError);
+
+        // Check if bucket doesn't exist
+        if (uploadError.message.includes('not found') || uploadError.message.includes('does not exist')) {
+          alert(`Le bucket "${bucketName}" n'existe pas encore. Veuillez créer le bucket dans Supabase Storage d'abord.\n\nPour l'instant, vous pouvez soumettre le formulaire sans fichier.`);
+        } else {
+          alert(`Erreur lors du téléchargement du fichier: ${uploadError.message}`);
+        }
+
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
 
       // Get public URL
       const { data } = supabase.storage
@@ -46,9 +64,15 @@ export default function FileUpload({
 
       setFileName(file.name);
       onChange(data.publicUrl);
-    } catch (error) {
+      alert('Fichier téléchargé avec succès !');
+    } catch (error: any) {
       console.error('Error uploading file:', error);
-      alert('Erreur lors du téléchargement du fichier');
+      alert(`Erreur: ${error?.message || 'Erreur inconnue lors du téléchargement'}`);
+
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     } finally {
       setUploading(false);
     }

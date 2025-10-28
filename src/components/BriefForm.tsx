@@ -116,15 +116,42 @@ export default function BriefForm({ onSuccess }: BriefFormProps) {
         team_member_email: formData.team_member_email,
       };
 
-      const { error } = await supabase.from('briefs').insert([dbData]);
+      console.log('Submitting brief data:', dbData);
 
-      if (error) throw error;
+      const { data, error } = await supabase.from('briefs').insert([dbData]);
 
+      if (error) {
+        console.error('Supabase error details:', error);
+        throw error;
+      }
+
+      console.log('Brief submitted successfully:', data);
       alert('Brief soumis avec succès!');
       onSuccess();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error submitting brief:', error);
-      alert('Erreur lors de la soumission du brief');
+
+      // More detailed error message
+      let errorMessage = 'Erreur lors de la soumission du brief';
+
+      if (error?.message) {
+        errorMessage += `:\n${error.message}`;
+      }
+
+      if (error?.details) {
+        errorMessage += `\nDétails: ${error.details}`;
+      }
+
+      if (error?.hint) {
+        errorMessage += `\nSuggestion: ${error.hint}`;
+      }
+
+      // Check for specific errors
+      if (error?.message?.includes('column') && error?.message?.includes('does not exist')) {
+        errorMessage += '\n\nIl semble que certaines colonnes manquent dans la base de données. Veuillez exécuter les scripts de migration SQL dans Supabase.';
+      }
+
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
