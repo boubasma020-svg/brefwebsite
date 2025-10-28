@@ -2,6 +2,7 @@ import { useState, FormEvent } from 'react';
 import { supabase, AGE_RANGES, GENDERS, LOCATIONS, PROFESSIONS, DIGITAL_HABITS, SITE_OBJECTIVES, MAIN_PAGES, SPECIFIC_FEATURES, BRAND_TONES, CONTENT_TYPES, DOMAIN_STATUS, HOSTING_OPTIONS, CMS_OPTIONS, MAINTENANCE_OPTIONS } from '../lib/supabase';
 import { FileText } from 'lucide-react';
 import MultiSelect from './MultiSelect';
+import FileUpload from './FileUpload';
 
 interface BriefFormProps {
   onSuccess: () => void;
@@ -31,11 +32,15 @@ export default function BriefForm({ onSuccess }: BriefFormProps) {
     specific_features_other: '',
     competitor_examples: '',
     visual_identity: '',
+    visual_identity_text: '',
+    visual_identity_document_url: '',
     colors_typography: '',
     brand_tone: [] as string[],
     brand_tone_other: '',
     content_types: [] as string[],
     content_types_other: '',
+    content_text: '',
+    content_document_url: '',
     content_provider: '',
     seo_optimization: false,
     domain_name: '',
@@ -83,11 +88,15 @@ export default function BriefForm({ onSuccess }: BriefFormProps) {
         specific_features_other: formData.specific_features_other,
         competitor_examples: formData.competitor_examples,
         visual_identity: formData.visual_identity,
+        visual_identity_text: formData.visual_identity_text,
+        visual_identity_document_url: formData.visual_identity_document_url,
         colors_typography: formData.colors_typography,
         brand_tone_array: formData.brand_tone,
         brand_tone_other: formData.brand_tone_other,
         content_types_array: formData.content_types,
         content_types_other: formData.content_types_other,
+        content_text: formData.content_text,
+        content_document_url: formData.content_document_url,
         content_provider: formData.content_provider,
         seo_optimization: formData.seo_optimization,
         domain_name: formData.domain_name,
@@ -421,6 +430,25 @@ export default function BriefForm({ onSuccess }: BriefFormProps) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
+              Identité visuelle - Description
+            </label>
+            <input
+              type="text"
+              name="visual_identity_text"
+              value={formData.visual_identity_text}
+              onChange={handleChange}
+              placeholder="Décrivez votre identité visuelle..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <FileUpload
+            label="Document d'identité visuelle"
+            value={formData.visual_identity_document_url}
+            onChange={(url) => setFormData({ ...formData, visual_identity_document_url: url })}
+            accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+          />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Couleurs, typographies, styles visuels préférés
             </label>
             <input
@@ -478,6 +506,25 @@ export default function BriefForm({ onSuccess }: BriefFormProps) {
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Contenus - Description
+            </label>
+            <input
+              type="text"
+              name="content_text"
+              value={formData.content_text}
+              onChange={handleChange}
+              placeholder="Décrivez vos contenus..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <FileUpload
+            label="Document de contenus"
+            value={formData.content_document_url}
+            onChange={(url) => setFormData({ ...formData, content_document_url: url })}
+            accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png"
+          />
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Qui fournit le contenu ?
